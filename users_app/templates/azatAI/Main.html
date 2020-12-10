@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+ {% block title %}
+     Main
+ {% endblock %}
+
+ {% block content %}
+
+     Users:
+     <table border="2">
+        <td>id</td> <td>phone number</td> <td>email</td>
+         {% for user in users %}
+              <tr>
+                <td>{{ user.id }}</td><td>{{ user.phone_number }}</td> <td> {{ user.email }} </td>
+              </tr>
+         {% endfor %}
+     </table>
+
+    <p>
+       Current USER: {{ request.user}}
+    </p>
+
+     <p>
+       USER PHONE_NUMBER:  {{ request.user.phone_number }}
+    </p>
+
+    <p>
+       OS:   {{ os }}
+    </p>
+
+      <p>
+         BROWSER: {{ browser }}
+     </p>
+
+     <p>
+         IP ADDRESS: {{ ip }}
+     </p>
+
+    <p>
+        HTTP header: {{ header }}
+    </p>
+
+    <p>
+        DEVICE ID: {{ device_id }}
+    </p>
+
+
+ {% endblock %}
+

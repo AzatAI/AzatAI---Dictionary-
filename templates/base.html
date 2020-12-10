@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+                Shop Engine
+        {% endblock %}
+    </title>
+
+
+    <style>
+        {% block styles %}
+        #buttns a {
+               border: 2px solid black;
+               padding: 10px;
+           }
+        {% endblock %}
+    </style>
+
+</head>
+<body>
+
+    {% block auth %}
+{#        <p id="buttns" class="btn-primary ">#}
+{#                       <p> <a href="{% url 'main_url' %}">Main</a></p>#}
+{##}
+{#            {% if request.user.is_authenticated %}#}
+{#                <p>Hello, {{ request.user }}</p>#}
+{#                <a href="{% url 'logout_url' %}">Log out</a>#}
+{#            {% else %}#}
+{#                <a href="{% url 'log_user_url' %}"> Login </a>#}
+{#                <a href="{% url 'create_user_form_url' %}" style="margin-left: 10px;">Registration</a>#}
+{##}
+{#            {% endif %}#}
+{#        </p>#}
+    {% endblock %}
+
+    {% block aside %}
+
+    {% endblock %}
+
+  {% block content %}
+      There is no content
+  {% endblock %}
+
+
+</body>
+</html>
