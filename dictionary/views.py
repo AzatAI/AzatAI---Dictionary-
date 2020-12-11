@@ -18,13 +18,17 @@ from bs4 import BeautifulSoup
 import wikipediaapi
 import re
 
-def translator(OBJ):
+def translator(OBJ, lang):
     HEADERS = {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'}
 
     html = requests.get(f'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q={OBJ}',
                         headers=HEADERS, params=None)
+    if lang == 'en':
+        html = requests.get(f'https://translate.googleapis.com/translate_a/single?client=gtx&sl=ru&tl=en&dt=t&q={OBJ}',
+                            headers=HEADERS, params=None)
+
     if html.status_code == 200:
         arr = []
         word = ''
@@ -98,7 +102,6 @@ def get_content(html, OBJ, HEADER, HOST, URL, lang):
     items = soup.ol.get_text()
     meaning = get_clear_text(items, lang)
     audio = soup.find('td', class_='audiometa')
-    print(OBJ)
     pronunciation = soup.find('span', class_="IPA").get_text()
     link = str(audio).split('href="')[1].split('"')[0]
     html1 = get_html(HOST+link, HEADER)
@@ -139,11 +142,9 @@ def get_params(word, lang):
 
 def get_word(request, word, lang):
     agent_accept = get_header(request)
-    if lang == "ru":
-        word = translator(word)
-    # URL = f'https://en.wiktionary.org/wiki/{word}'
+    # if lang == "ru":
+    #     word = translator(word, lang)
     HEADERS = {'user-agent': agent_accept[0], 'accept': agent_accept[1]}
-    # HOST = 'https://en.wiktionary.org/'
     params = get_params(word, lang)
     URL = params[0]
     HOST = params[1]
@@ -160,16 +161,24 @@ class Main(View):
 
     def post(self, request):
         word = request.POST.get('word')
-        word_ru = translator(word)
+        word_ru = translator(word, 'ru')
+        word_en = translator(word, 'en')
+        print(word_en+" EN")
+        print(word_ru+" RU")
         words = Word.objects.all()
         en_words = []
+        ru_words = []
         for i in words:
             en_words.append(i.word_en)
-        if word in en_words:
+            ru_words.append(i.word_ru)
+
+        if word_ru in ru_words:
+            return redirect('dict_main_url')
+        elif word_en in en_words:
             return redirect('dict_main_url')
         else:
-            en_word = get_word(request, word, 'en')
-            ru_word = get_word(request, word, 'ru')
+            en_word = get_word(request, word_en, 'en')
+            ru_word = get_word(request, word_ru, 'ru')
             Word.objects.create(word_en=word,
                                 text_en=en_word['meaning'],
                                 audio_en=en_word['link_audio'],
