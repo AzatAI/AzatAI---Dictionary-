@@ -28,6 +28,7 @@ def get_time_pass():
         time_pass = time_pass1
     return time_pass
 
+
 def get_header(request):
     regex = re.compile('^HTTP_')
     head = dict((regex.sub('', header), value) for (header, value)

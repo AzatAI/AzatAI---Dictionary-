@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+     <form action="{% url 'dict_main_url'%}"  method="post">
+         {% csrf_token %}
+       <p><strong>Search:</strong></p>
+       <p><input maxlength="25" size="40" name="word"></p>
+        <button type="submit"> Search </button>
+     </form>
+
+     <p>Words:</p>
+
+    {% for word in words %}
+        <div style="border: black solid 2px;">
+            <p>
+                {{ word.text_en|safe }}
+            </p>
+
+            <p>
+                {{ word.pronunciation_en  }}
+            </p>
+
+            <p>
+                {{ word.audio_en }}
+                <audio>
+                    <source src="{{ word.audio_en }}">
+                </audio>
+            </p>
+        </div>
+    {% endfor %}
+
+</body>
+</html>
