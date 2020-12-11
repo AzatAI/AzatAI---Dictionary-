@@ -206,3 +206,7 @@ class WordDetail(View):
     def get(self, request, id, lang):
         word = Word.objects.get(id=id)
         return render(request, 'dictionary/word_detail.html', context={'word': word, 'lang': lang})
+
+class WorlList(View):
+    def get(self, request):
+        pass

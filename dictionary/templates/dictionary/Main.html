@@ -19,43 +19,13 @@
         <div style="border: red solid 2px; ">
             <div style="border: black solid 2px;">
                 <p>
-                    {{ word.text_en|safe }}
-                </p>
-
-                <p>
-                    {{ word.pronunciation_en  }}
-                </p>
-
-                <p>
-                    {{ word.audio_en }}
-                    <audio>
-                        <source src="{{ word.audio_en }}">
-                    </audio>
-                </p>
-
-                <p>
-                    {{ word.wiki_en }}
+                    <a href="{% url 'word_detail_url' id=word.id lang='en' %}">{{ word.word_en }}</a>
                 </p>
             </div>
 
             <div style="border: black solid 2px;">
                 <p>
-                    {{ word.text_ru|safe }}
-                </p>
-
-                <p>
-                    {{ word.pronunciation_ru }}
-                </p>
-
-                <p>
-                    {{ word.audio_ru }}
-                    <audio>
-                        <source src="{{ word.audio_ru }}">
-                    </audio>
-                </p>
-
-                <p>
-                    {{ word.wiki_ru }}
+                    <a href="{% url 'word_detail_url' id=word.id lang='ru' %}">{{ word.word_ru }}</a>
                 </p>
             </div>
         </div>
