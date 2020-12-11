@@ -175,12 +175,12 @@ class Main(View):
         for i in words:
             en_words.append(i.word_en)
             ru_words.append(i.word_ru)
-        if is_ru:
+        if is_ru and word_ru in ru_words:
             lang = 'ru'
-            if word_ru in ru_words:
-                word_ru = Word.objects.get(word_ru=word_ru)
-                return redirect('word_detail_url', id=word_ru.id, lang=lang)
+            word_ru = Word.objects.get(word_ru=word_ru)
+            return redirect('word_detail_url', id=word_ru.id, lang=lang)
         elif word_en in en_words:
+            lang = 'en'
             word_en = Word.objects.get(word_en=word_en)
             return redirect('word_detail_url', id=word_en.id, lang=lang)
         else:
@@ -200,6 +200,7 @@ class Main(View):
                                         pronunciation_ru=ru_word['pronunciation'],
 
                                         )
+            print(word)
 
         return redirect('word_detail_url', id=word.id, lang=lang)
 
