@@ -98,16 +98,21 @@ def get_wikipedia_url(OBJ, lang):
 
 
 def get_content(html, OBJ, HEADER, HOST, URL, lang):
+    words = str(OBJ).split()
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.ol.get_text()
     meaning = get_clear_text(items, lang)
     audio = soup.find('td', class_='audiometa')
-    pronunciation = soup.find('span', class_="IPA").get_text()
-    link = str(audio).split('href="')[1].split('"')[0]
-    html1 = get_html(HOST+link, HEADER)
-    soup1 = BeautifulSoup(html1.text, 'html.parser')
-    audio = soup1.find('a', class_='internal')
-    link_audio = 'https:' + str(audio).split('href="')[1].split('"')[0]
+    if len(words) > 1:
+        pronunciation = OBJ
+        link_audio = ""
+    else:
+        pronunciation = soup.find('span', class_="IPA").get_text()
+        link = str(audio).split('href="')[1].split('"')[0]
+        html1 = get_html(HOST+link, HEADER)
+        soup1 = BeautifulSoup(html1.text, 'html.parser')
+        audio = soup1.find('a', class_='internal')
+        link_audio = 'https:' + str(audio).split('href="')[1].split('"')[0]
 
     object = {
         'meaning': meaning,
@@ -181,6 +186,8 @@ class Main(View):
         else:
             en_word = get_word(request, word_en, 'en')
             ru_word = get_word(request, word_ru, 'ru')
+            print(en_word)
+            print(ru_word)
             word = Word.objects.create( word_en=word,
                                         text_en=en_word['meaning'],
                                         audio_en=en_word['link_audio'],
@@ -194,7 +201,7 @@ class Main(View):
 
                                         )
 
-        return redirect('word_detail_url',id=word.id, lang=lang)
+        return redirect('word_detail_url', id=word.id, lang=lang)
 
     def get(self, request):
         words = Word.objects.all()
@@ -207,6 +214,10 @@ class WordDetail(View):
         word = Word.objects.get(id=id)
         return render(request, 'dictionary/word_detail.html', context={'word': word, 'lang': lang})
 
-class WorlList(View):
-    def get(self, request):
-        pass
+class WordList(View):
+    def get(self, request, words):
+        arr = []
+        for word in words:
+            arr.append(Word.objects.get(id=word.id))
+        return redirect(request, 'dictionary/world_list.html', context={'words': words})
+
