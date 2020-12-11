@@ -98,6 +98,7 @@ def get_content(html, OBJ, HEADER, HOST, URL, lang):
     items = soup.ol.get_text()
     meaning = get_clear_text(items, lang)
     audio = soup.find('td', class_='audiometa')
+    print(OBJ)
     pronunciation = soup.find('span', class_="IPA").get_text()
     link = str(audio).split('href="')[1].split('"')[0]
     html1 = get_html(HOST+link, HEADER)
