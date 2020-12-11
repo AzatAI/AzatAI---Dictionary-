@@ -107,7 +107,11 @@ def get_content(html, OBJ, HEADER, HOST, URL, lang):
         pronunciation = OBJ
         link_audio = ""
     else:
-        pronunciation = soup.find('span', class_="IPA").get_text()
+        try:
+            pronunciation = soup.find('span', class_="IPA").get_text()
+        except AttributeError:
+            pronunciation = OBJ
+
         link = str(audio).split('href="')[1].split('"')[0]
         html1 = get_html(HOST+link, HEADER)
         soup1 = BeautifulSoup(html1.text, 'html.parser')
@@ -162,7 +166,8 @@ def get_word(request, word, lang):
 class Main(View):
 
     def post(self, request):
-        word = request.POST.get('word')
+        word = str(request.POST.get('word')).lower().strip()
+        word.replace(" ", "_")
         if not word:
             return redirect('dict_main_url')
         word_ru = translator(word, 'ru')
@@ -185,13 +190,9 @@ class Main(View):
             word_en = Word.objects.get(word_en=word_en)
             return redirect('word_detail_url', id=word_en.id, lang=lang)
 
-        en_word = get_word(request, word_en, 'en')
-        ru_word = get_word(request, word_ru, 'ru')
+        en_word = get_word(request, word_en.lower(), 'en')
+        ru_word = get_word(request, word_ru.lower(), 'ru')
 
-        print(word_en)
-        print(en_word)
-        print(word_ru)
-        print(ru_word)
         try:
             word = Word.objects.create( word_en=word_en,
                                         text_en=en_word['meaning'],
@@ -204,7 +205,7 @@ class Main(View):
                                         wiki_ru=ru_word['wikipedia_url'],
                                         pronunciation_ru=ru_word['pronunciation'],
 
-                                        )
+                                    )
         except Exception:
             return redirect("not_found_url")
 
