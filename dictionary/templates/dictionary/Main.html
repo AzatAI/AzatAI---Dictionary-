@@ -16,22 +16,50 @@
      <p>Words:</p>
 
     {% for word in words %}
-        <div style="border: black solid 2px;">
-            <p>
-                {{ word.text_en|safe }}
-            </p>
+        <div style="border: red solid 2px; ">
+            <div style="border: black solid 2px;">
+                <p>
+                    {{ word.text_en|safe }}
+                </p>
 
-            <p>
-                {{ word.pronunciation_en  }}
-            </p>
+                <p>
+                    {{ word.pronunciation_en  }}
+                </p>
 
-            <p>
-                {{ word.audio_en }}
-                <audio>
-                    <source src="{{ word.audio_en }}">
-                </audio>
-            </p>
+                <p>
+                    {{ word.audio_en }}
+                    <audio>
+                        <source src="{{ word.audio_en }}">
+                    </audio>
+                </p>
+
+                <p>
+                    {{ word.wiki_en }}
+                </p>
+            </div>
+
+            <div style="border: black solid 2px;">
+                <p>
+                    {{ word.text_ru|safe }}
+                </p>
+
+                <p>
+                    {{ word.pronunciation_ru }}
+                </p>
+
+                <p>
+                    {{ word.audio_ru }}
+                    <audio>
+                        <source src="{{ word.audio_ru }}">
+                    </audio>
+                </p>
+
+                <p>
+                    {{ word.wiki_ru }}
+                </p>
+            </div>
         </div>
+
     {% endfor %}
 
 </body>
