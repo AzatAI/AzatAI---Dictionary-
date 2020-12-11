@@ -122,7 +122,6 @@ def get_content(html, OBJ, HEADER, HOST, URL, lang):
         'pronunciation': pronunciation,
 
     }
-    print(object)
     return object
 
 
@@ -157,13 +156,15 @@ def get_word(request, word, lang):
         object = get_content(html.text, word, HEADERS, HOST, URL, lang)
         return object
     else:
-        return 'Not found'
+        return redirect("not_found_url")
 
 
 class Main(View):
 
     def post(self, request):
         word = request.POST.get('word')
+        if not word:
+            return redirect('dict_main_url')
         word_ru = translator(word, 'ru')
         word_en = translator(word, 'en')
 
@@ -175,20 +176,24 @@ class Main(View):
         for i in words:
             en_words.append(i.word_en)
             ru_words.append(i.word_ru)
-        if is_ru and word_ru in ru_words:
+        if is_ru:
             lang = 'ru'
-            word_ru = Word.objects.get(word_ru=word_ru)
-            return redirect('word_detail_url', id=word_ru.id, lang=lang)
+            if word_ru in ru_words:
+                word_ru = Word.objects.get(word_ru=word_ru)
+                return redirect('word_detail_url', id=word_ru.id, lang=lang)
         elif word_en in en_words:
-            lang = 'en'
             word_en = Word.objects.get(word_en=word_en)
             return redirect('word_detail_url', id=word_en.id, lang=lang)
-        else:
-            en_word = get_word(request, word_en, 'en')
-            ru_word = get_word(request, word_ru, 'ru')
-            print(en_word)
-            print(ru_word)
-            word = Word.objects.create( word_en=word,
+
+        en_word = get_word(request, word_en, 'en')
+        ru_word = get_word(request, word_ru, 'ru')
+
+        print(word_en)
+        print(en_word)
+        print(word_ru)
+        print(ru_word)
+        try:
+            word = Word.objects.create( word_en=word_en,
                                         text_en=en_word['meaning'],
                                         audio_en=en_word['link_audio'],
                                         wiki_en=en_word['wikipedia_url'],
@@ -200,9 +205,11 @@ class Main(View):
                                         pronunciation_ru=ru_word['pronunciation'],
 
                                         )
-            print(word)
+        except Exception:
+            return redirect("not_found_url")
 
         return redirect('word_detail_url', id=word.id, lang=lang)
+
 
     def get(self, request):
         words = Word.objects.all()
@@ -222,3 +229,7 @@ class WordList(View):
             arr.append(Word.objects.get(id=word.id))
         return redirect(request, 'dictionary/world_list.html', context={'words': words})
 
+
+class NotFound(View):
+    def get(self, request):
+        return render(request, 'dictionary/404.html', )

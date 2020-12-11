@@ -8,6 +8,7 @@ from django.conf import settings
 urlpatterns = [
     path("", Main.as_view(), name="dict_main_url"),
     path("detail/<str:id>/<str:lang>", WordDetail.as_view(), name="word_detail_url"),
+    path("notfound", NotFound.as_view(), name="not_found_url"),
 
 ]
 if settings.DEBUG:
