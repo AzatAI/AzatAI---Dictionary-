@@ -139,11 +139,9 @@ def get_params(word, lang):
     return [URL, HOST]
 
 
-
 def get_word(request, word, lang):
     agent_accept = get_header(request)
-    # if lang == "ru":
-    #     word = translator(word, lang)
+
     HEADERS = {'user-agent': agent_accept[0], 'accept': agent_accept[1]}
     params = get_params(word, lang)
     URL = params[0]
@@ -163,38 +161,48 @@ class Main(View):
         word = request.POST.get('word')
         word_ru = translator(word, 'ru')
         word_en = translator(word, 'en')
-        print(word_en+" EN")
-        print(word_ru+" RU")
+
+        is_ru = (re.findall(r'[а-яА-ЯёЁ]', word))
         words = Word.objects.all()
         en_words = []
         ru_words = []
+        lang = 'en'
         for i in words:
             en_words.append(i.word_en)
             ru_words.append(i.word_ru)
-
-        if word_ru in ru_words:
-            return redirect('dict_main_url')
+        if is_ru:
+            lang = 'ru'
+            if word_ru in ru_words:
+                word_ru = Word.objects.get(word_ru=word_ru)
+                return redirect('word_detail_url', id=word_ru.id, lang=lang)
         elif word_en in en_words:
-            return redirect('dict_main_url')
+            word_en = Word.objects.get(word_en=word_en)
+            return redirect('word_detail_url', id=word_en.id, lang=lang)
         else:
             en_word = get_word(request, word_en, 'en')
             ru_word = get_word(request, word_ru, 'ru')
-            Word.objects.create(word_en=word,
-                                text_en=en_word['meaning'],
-                                audio_en=en_word['link_audio'],
-                                wiki_en=en_word['wikipedia_url'],
-                                pronunciation_en=en_word['pronunciation'],
-                                word_ru=word_ru,
-                                text_ru=ru_word['meaning'],
-                                audio_ru=ru_word['link_audio'],
-                                wiki_ru=ru_word['wikipedia_url'],
-                                pronunciation_ru=ru_word['pronunciation'],
+            word = Word.objects.create( word_en=word,
+                                        text_en=en_word['meaning'],
+                                        audio_en=en_word['link_audio'],
+                                        wiki_en=en_word['wikipedia_url'],
+                                        pronunciation_en=en_word['pronunciation'],
+                                        word_ru=word_ru,
+                                        text_ru=ru_word['meaning'],
+                                        audio_ru=ru_word['link_audio'],
+                                        wiki_ru=ru_word['wikipedia_url'],
+                                        pronunciation_ru=ru_word['pronunciation'],
 
-                                )
-        return redirect('dict_main_url')
+                                        )
 
+        return redirect('word_detail_url',id=word.id, lang=lang)
 
     def get(self, request):
         words = Word.objects.all()
 
         return render(request, 'dictionary/Main.html', context={'words': words })
+
+
+class WordDetail(View):
+    def get(self, request, id, lang):
+        word = Word.objects.get(id=id)
+        return render(request, 'dictionary/word_detail.html', context={'word': word, 'lang': lang})

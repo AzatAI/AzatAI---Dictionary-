@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if lang == 'ru' %}
+     <h1>{{ word.word_ru }}</h1>
+
+    <p>Meaning: {{ word.text_ru }}</p>
+    <p>Wiki: {{ word.wiki_ru }}</p>
+    <p>Audio: {{ word.audio_ru }}</p>
+    {% else %}
+    <h1>{{ word.word_en }}</h1>
+
+    <p>Meaning: {{ word.text_en }}</p>
+    <p>Wiki: {{ word.wiki_en }}</p>
+    <p>Audio: {{ word.audio_en }}</p>
+    {% endif %}
+</body>
+</html>
