@@ -31,6 +31,14 @@
         </div>
 
     {% endfor %}
+     <hr>
+     <h1>History of {{ request.user.first_name }}: </h1>
+    {% for history_word in history_words %}
+        <div style="border: black dot-dash 3px; border-radius: 4px;">
+            <p>{{ history_word.word.word_en }} | {{ history_word.word.word_ru }} <b>{{ history_word.date_of_add }}</b></p>
+        </div>
+    {% endfor %}
+
 
 </body>
 </html>

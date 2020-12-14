@@ -13,6 +13,7 @@ import user_agents
 # import re
 # from .utils import *
 from django.core.exceptions import *
+from .serializers import *
 import requests
 from bs4 import BeautifulSoup
 import wikipediaapi
@@ -214,23 +215,46 @@ class Main(View):
 
     def get(self, request):
         words = Word.objects.all()
-
-        return render(request, 'dictionary/Main.html', context={'words': words })
+        history_words = HistoryWord.objects.filter(user=request.user)
+        return render(request, 'dictionary/Main.html', context={'words': words, 'history_words': history_words})
 
 
 class WordDetail(View):
     def get(self, request, id, lang):
         word = Word.objects.get(id=id)
+        history_words = HistoryWord.objects.filter(user=request.user)
+
+        his_words = []
+        for i in history_words:
+            his_words.append(i.word.word_en)
+
+        if request.user.is_authenticated:
+            if word.word_en not in his_words:
+                print(word, his_words)
+                HistoryWord.objects.create(user=request.user, word=word)
+            else:
+                last_word = HistoryWord.objects.get(user=request.user, word=word)
+                last_word.delete()
+                HistoryWord.objects.create(user=request.user, word=word)
+
         return render(request, 'dictionary/word_detail.html', context={'word': word, 'lang': lang})
 
-class WordList(View):
-    def get(self, request, words):
-        arr = []
-        for word in words:
-            arr.append(Word.objects.get(id=word.id))
-        return redirect(request, 'dictionary/world_list.html', context={'words': words})
-
+# class WordList(View):
+#     def get(self, request, words):
+#         arr = []
+#         for word in words:
+#             arr.append(Word.objects.get(id=word.id))
+#         return redirect(request, 'dictionary/world_list.html', context={'words': words})
+#
 
 class NotFound(View):
     def get(self, request):
         return render(request, 'dictionary/404.html', )
+
+class WordView(APIView):
+    def get(self, request):
+        words = Word.objects.all()
+
+        serializer = WordSerializer_v1(words, many=True)
+
+        return Response(serializer.data)

@@ -114,10 +114,10 @@ class Users(AbstractBaseUser):
 
 
     def save(self, *args, **kwargs):
-        try:
-            self.session_expire = self.last_update + timedelta(days=30)
-        except Exception:
-            pass
+        # try:
+        #     self.session_expire = self.last_update + timedelta(days=30)
+        # except Exception:
+        #     pass
         if not self.id:
             self.id = set_id()
         super(Users, self).save(*args, **kwargs)

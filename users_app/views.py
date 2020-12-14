@@ -130,9 +130,7 @@ class Registration(View):
             login(request, account)
             ip = get_client_ip(request)
             os = str(request.user_agent.os.family) + " " + str(request.user_agent.os.version_string)
-            print("BEFORE")
             user = Users.objects.get(id__iexact=request.user.id)
-            print("AFTER")
             Device.objects.create(ip=ip, device_os=os, user=user)
 
             return redirect('main_url')

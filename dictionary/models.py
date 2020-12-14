@@ -1,5 +1,6 @@
 from django.db import models
 from users_app.views import set_id, get_hex_id
+from users_app.models import *
 # Create your models here.
 
 
@@ -23,3 +24,11 @@ class Word(models.Model):
         if not self.id:
             self.id = set_id()
         super(Word, self).save(*args, **kwargs)
+
+class HistoryWord(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='user')
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='word')
+    date_of_add = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.word)
