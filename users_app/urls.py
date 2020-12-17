@@ -11,7 +11,6 @@ urlpatterns = [
     path("registration/", Registration.as_view(), name="registration_user_url"),
     path("login/", Login.as_view(), name="log_user_url"),
     path("logout/", Logout.as_view(), name="logout_url"),
-    path("my-account/", MyAccount.as_view(), name="my_account_url"),
     path("api/words/", WordView.as_view(), name="word_view_url"),
     path("api/device/", DeviceView.as_view(), name="device-view-url"),
     path("api/users/<str:ver>/", UsersView.as_view(), name="user_view_url"),

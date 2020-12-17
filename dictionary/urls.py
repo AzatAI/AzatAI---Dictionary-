@@ -8,6 +8,8 @@ from django.conf import settings
 urlpatterns = [
     path("", Main.as_view(), name="dict_main_url"),
     path("detail/<str:id>/<str:lang>", WordDetail.as_view(), name="word_detail_url"),
+    path("my-account/", MyAccount.as_view(), name="my_account_url"),
+    path("my-account/edit", MyAccountEdit.as_view(), name="my_account_edit_url"),
     path("notfound", NotFound.as_view(), name="not_found_url"),
 
 ]

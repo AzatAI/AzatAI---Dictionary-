@@ -10,6 +10,8 @@ class RegistrationForm(UserCreationForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': ('First name')}),
                             label=("First name"), required=False)
 
+    image = forms.ImageField(required=False)
+
     last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': ('Last name')}),
                             label=("Last name"), required=False)
 

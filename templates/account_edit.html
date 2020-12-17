@@ -108,37 +108,46 @@
         </div>
     </header>
     <div class="main">
+    <form action="{% url 'my_account_edit_url' %}" method="post" enctype='multipart/form-data'>
         <div class="main__up">
+
             <div class="avatar">
                 {% if request.user.image   %}
-                    <img src="{{ request.user.image.url }}" width="200" height="200" alt="image not available">
+                    <img src="{{ request.user.image.url }}" alt="image not available" width="200" height="200">
                 {% else %}
                  <img src="{% static 'images/avatar.png' %}" width="200" height="200">
                 {% endif %}
-
+            <h4>Change image:   <input type="file" name="image" accept="image/*" ></h4>
+{#            <<in></in>put type="image" name="image" alt="avatar" src="{{ request.user.image.url }}">#}
             </div>
             <div class="filed">
-                <h4>First Name: {{ request.user.first_name }}</h4>
-                <h4>Last Name: {{ request.user.last_name }}</h4>
-                <h4>Email: {{ request.user.email }}</h4>
-                <h4>Phone: {% if request.user.phone_number %}
-                            {{ request.user.phone_number }}
-                            {% else %}
-                            No phone number
-                            {% endif %} </h4>
-                <a href="{% url 'my_account_edit_url' %}"><h2>Edit</h2></a>
+
+              {% csrf_token %}
+                <h4>First Name: <input type="text" value="{{ request.user.first_name }}" name="first_name"></h4>
+                <h4>Last Name: <input type="text" value="{{ request.user.last_name }}" name="last_name"></h4>
+                <h4>Email: <input type="email" value="{{ request.user.email }}" name="email"></h4>
+                <h4>Phone: <input type="text" value="{{ request.user.phone_number }}" name="phone_number"></h4>
+                 <h4>Current password:   <input type="password" id="account-details-oldpass" name="password"></h4>
+                 <h4>New password:  <input type="password" id="account-details-newpass" name="password1"></h4>
+                 <h4>Confirm password:  <input type="password" id="account-details-confpass" name="password2"></h4>
+
+
+                <button type="submit"><h2>Save</h2></button>
+
             </div>
+
         </div>
-        <div class="main__down">
-            <h1>History</h1>
-            <ol>
-                {% for obj in history %}
-                    <li>
-                        <a href="{% url 'word_detail_url' id=obj.word.id lang='en' %}">{{ obj.word.word_en|title }} || {{ obj.word.word_ru|title }}</a>
-                    </li>
-                {% endfor %}
-            </ol>
-        </div>
+     </form>
+{#        <div class="main__down">#}
+{#            <h1>History</h1>#}
+{#            <ol>#}
+{#                {% for obj in history %}#}
+{#                    <li>#}
+{#                        <a href="{% url 'word_detail_url' id=obj.word.id lang='en' %}">{{ obj.word.word_en|title }} || {{ obj.word.word_ru|title }}</a>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#            </ol>#}
+{#        </div>#}
     </div>
     <footer class="foot">
         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,<br> when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>

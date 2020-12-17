@@ -107,40 +107,19 @@
             </div>
         </div>
     </header>
-    <div class="main">
-        <div class="main__up">
-            <div class="avatar">
-                {% if request.user.image   %}
-                    <img src="{{ request.user.image.url }}" width="200" height="200" alt="image not available">
-                {% else %}
-                 <img src="{% static 'images/avatar.png' %}" width="200" height="200">
-                {% endif %}
 
-            </div>
-            <div class="filed">
-                <h4>First Name: {{ request.user.first_name }}</h4>
-                <h4>Last Name: {{ request.user.last_name }}</h4>
-                <h4>Email: {{ request.user.email }}</h4>
-                <h4>Phone: {% if request.user.phone_number %}
-                            {{ request.user.phone_number }}
-                            {% else %}
-                            No phone number
-                            {% endif %} </h4>
-                <a href="{% url 'my_account_edit_url' %}"><h2>Edit</h2></a>
-            </div>
-        </div>
-        <div class="main__down">
-            <h1>History</h1>
-            <ol>
-                {% for obj in history %}
-                    <li>
-                        <a href="{% url 'word_detail_url' id=obj.word.id lang='en' %}">{{ obj.word.word_en|title }} || {{ obj.word.word_ru|title }}</a>
-                    </li>
-                {% endfor %}
-            </ol>
+    <div class="main">
+
+        <h2 id="404" style="margin-left: 660px; font-size: 50px; "> 404 Not found</h2>
+
+        <p style="margin-left: 660px; font-size: 30px; ">This word doesn't exists</p>
+        <div style="text-align: center; ">
+            <img src="{% static 'images/oibol.jpg' %}" alt="" width="400px" height="400px" >
+            <h2><q>I didn't make a 404 page</q>(c) Oibol</h2>
         </div>
     </div>
-    <footer class="foot">
+
+    <footer class="foot" >
         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,<br> when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
     </footer>
     <script src="{% static 'js/main.js' %}"></script>

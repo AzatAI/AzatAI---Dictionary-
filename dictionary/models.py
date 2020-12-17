@@ -32,3 +32,6 @@ class HistoryWord(models.Model):
 
     def __str__(self):
         return str(self.word)
+
+    class Meta:
+        ordering = ['-date_of_add']

@@ -112,12 +112,17 @@ def get_content(html, OBJ, HEADER, HOST, URL, lang):
             pronunciation = soup.find('span', class_="IPA").get_text()
         except AttributeError:
             pronunciation = OBJ
-
-        link = str(audio).split('href="')[1].split('"')[0]
+        try:
+            link = str(audio).split('href="')[1].split('"')[0]
+        except IndexError :
+            link = ''
         html1 = get_html(HOST+link, HEADER)
         soup1 = BeautifulSoup(html1.text, 'html.parser')
         audio = soup1.find('a', class_='internal')
-        link_audio = 'https:' + str(audio).split('href="')[1].split('"')[0]
+        try:
+            link_audio = 'https:' + str(audio).split('href="')[1].split('"')[0]
+        except Exception:
+            link_audio = ''
 
     object = {
         'meaning': meaning,
@@ -231,12 +236,14 @@ class WordDetail(View):
         if request.user.is_authenticated:
             history_words = HistoryWord.objects.filter(user=request.user)
 
-            his_words = []
+            his_words_en = []
+            his_words_ru = []
             for i in history_words:
-                his_words.append(i.word.word_en)
+                his_words_en.append(i.word.word_en)
+                his_words_ru.append(i.word.word_ru)
 
-            if word.word_en not in his_words:
-                print(word, his_words)
+            if word.word_en not in his_words_en or word.word_ru not in his_words_ru:
+
                 HistoryWord.objects.create(user=request.user, word=word)
             else:
                 last_word = HistoryWord.objects.get(user=request.user, word=word)
@@ -255,7 +262,7 @@ class WordDetail(View):
 
 class NotFound(View):
     def get(self, request):
-        return render(request, 'dictionary/404.html', )
+        return render(request, '404.html', )
 
 class WordView(APIView):
     def get(self, request):
@@ -264,3 +271,56 @@ class WordView(APIView):
         serializer = WordSerializer_v1(words, many=True)
 
         return Response(serializer.data)
+
+
+
+class MyAccount(View):
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('dict_main_url')
+        history = HistoryWord.objects.filter(user=request.user)
+        if len(history) > 10:
+            i = len(history) - 10
+            history = history[0:len(history)-i]
+        return render(request, 'privatefolder.html', context={'history': history, })
+
+
+class MyAccountEdit(View):
+    def post(self, request):
+        user_new_data = Users.objects.get(id=request.user.id)
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        phone_number = request.POST.get('phone_number')
+        image = request.FILES.get('image')
+        if not image:
+            image = request.user.image
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        if password:
+            user = authenticate(email=request.user.email, password=password)
+            if user:
+                user_new_data.first_name = first_name
+                user_new_data.last_name = last_name
+                user_new_data.email = email
+                user_new_data.image = image
+                user_new_data.phone_number = phone_number
+                if password1 == password2:
+                    user_new_data.set_password(password1)
+                    user_new_data.save()
+                    new_user = authenticate(email=email, password=password1)
+                    login(request, new_user)
+        else:
+            user_new_data.first_name = first_name
+            user_new_data.last_name = last_name
+            user_new_data.email = email
+            user_new_data.image = image
+            user_new_data.phone_number = phone_number
+            user_new_data.save()
+
+        return redirect('my_account_url')
+
+    def get(self, request):
+        form = RegistrationForm()
+        return render(request, 'account_edit.html', context={'form': form })

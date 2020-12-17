@@ -11,7 +11,6 @@ from .serializers import *
 import re
 from .utils import *
 from django.core.exceptions import *
-
 '''Functions'''
 
 
@@ -51,65 +50,11 @@ def str_to_class(classname):
 '''Views'''
 
 
-class MyAccount(View):
-    def post(self, request):
-        user_new_data = Users.objects.get(id=request.user.id)
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        phone_number = request.POST.get('phone_number')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-        if password:
-            user = authenticate(email=request.user.email, password=password)
-            if user:
-                user_new_data.first_name = first_name
-                user_new_data.last_name = last_name
-                user_new_data.email = email
-                user_new_data.phone_number = phone_number
-                if password1 == password2:
-                    user_new_data.set_password(password1)
-                    user_new_data.save()
-                    new_user = authenticate(email=email, password=password1)
-                    login(request, new_user)
-        else:
-            user_new_data.first_name = first_name
-            user_new_data.last_name = last_name
-            user_new_data.email = email
-            user_new_data.phone_number = phone_number
-            user_new_data.save()
-
-        return redirect('my_account_url')
-
-
-    def get(self, request):
-        if not request.user.is_authenticated:
-            return redirect('dict_main_url')
-
-        return render(request, 'privatefolder.html',)
-
 
 class Main(View):
     def get(self, request):
-        users = Users.objects.filter(is_active=True)
-        if request.user.is_authenticated:
-            device = Device.objects.get(user=request.user.id)
-            os = str(request.user_agent.os.family) + " " + request.user_agent.os.version_string
-            browser = str(request.user_agent.browser.family) + " " + request.user_agent.browser.version_string
-            device_id = device.device_id
-            ip = get_client_ip(request)
-            header = get_header(request)
-            return render(request, 'azatAI/Main.html', context={'users': users,
-                                                                'request': request,
-                                                                'os': os,
-                                                                'header': header,
-                                                                'ip': ip,
-                                                                'device_id': device_id,
-                                                                'browser': browser,
 
-                                                          })
-        return render(request, 'azatAI/Main.html')
+        return redirect('dict_main_url')
 
 
 class Logout(View):
