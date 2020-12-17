@@ -7,10 +7,10 @@ from django.contrib.auth import authenticate
 
 
 class RegistrationForm(UserCreationForm):
-    first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': ('First_name')}),
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': ('First name')}),
                             label=("First name"), required=False)
 
-    last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': ('Last_name')}),
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': ('Last name')}),
                             label=("Last name"), required=False)
 
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': ('Email')}),

@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Dictionary</title>
+	    <link rel="stylesheet" type="text/css" href="{% static 'css/style1.css' %} ">
+        <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+    </head>
+    <body>
+    <div class="b-popup" id="popup1">
+        <div class="pop-up-content">
+            <div class="exit">
+                <a href="javascript:PopUpHide('#popup1')">X</a>
+            </div>
+            <h1>Регистрация</h1>
+                <form action="{% url 'registration_user_url' %}"  method="post" enctype='multipart/form-data'>
+                    {% csrf_token %}
+
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.last_name.errors }}
+                        </div>
+                    {% endif %}
+
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.first_name.errors }}
+                        </div>
+                    {% endif %}
+
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.email.errors }}
+                        </div>
+                    {% endif %}
+
+                    {{ form.phone_number }}
+                     {% if form.phone_number.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.phone_number.errors }}
+                        </div>
+                    {% endif %}
+
+                   {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.password1.errors }}
+                        </div>
+                    {% endif %}
+
+                  {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.password2.errors }}
+                        </div>
+                    {% endif %}
+                    <button class="aplybutton">Готово</button>
+                </form>
+        </div>
+    </div>
+    <div class="b-popup" id="popup2">
+        <div class="pop-up-content">
+            <div class="exit">
+                <a href="javascript:PopUpHide('#popup2')">X</a>
+            </div>
+            <h1>Войти</h1>
+             <form action="{% url 'log_user_url' %}"  method="post" enctype='multipart/form-data'>
+                {% csrf_token %}
+                <input type="text" placeholder="Email or Phone Number" name="email_or_phone" size="22"><br>
+                <input type="password" placeholder="Password" name="password" size="22" ><br>
+                <button class="aplybutton">Готово</button>
+            </form>
+        </div>
+    </div>
+    <header class="head">
+        <div class="head__up">
+            <div class="head__logoText">
+                <h2 ><a href="{% url 'dict_main_url' %}">Dictionary</a></h2>
+            </div>
+            <div class="head__login">
+                {% if not request.user.is_authenticated %}
+                    <h3><a class="head__sign" href="javascript:PopUpShow('#popup2')">Войти</a></h3>
+                    <h3><a class="head__sign" href="javascript:PopUpShow('#popup1')">Регистрация</a></h3>
+                    {% else %}
+                        <h3><a class="head__sign active" href="#">Личный Кабинет</a></h3>
+                    	<h3><a class="head__sign active" href="{% url 'logout_url' %}">Выход</a></h3>
+                {% endif %}
+            </div>
+        </div>
+        <div class="wrap1">
+            <form action="{% url 'dict_main_url'%}"  method="post">
+                {% csrf_token %}
+                <input class="inpt" type="text" name="word" size="40">
+                <button class="btn" type="submit" >Искать</button>
+            </form>
+            <div class="head__lang">
+                {% if lang == 'en' %}
+                    <h3><a href="{% url 'word_detail_url' id=word.id lang='ru' %}">Русский</a></h3>
+                {% elif lang == 'ru'%}
+                    <h3><a href="{% url 'word_detail_url' id=word.id lang='en' %}">English</a></h3>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    <div class="main">
+        <div class="main__word">
+            {% if lang == 'en'  %}
+            <h1>{{ word.word_en|title }}</h1>
+            <p class="pronun">{{ word.pronunciation_en }}</p>
+            <audio controls src="{{ word.audio_en }}">
+
+            </audio>
+        </div>
+        <div class="main__content">
+            <p class="meaning">
+                {{ word.text_en|title }}
+            </p>
+            <p class="url"> Link to wiki: <a href="{{ word.wiki_en }}">click</a></p>
+        </div>
+    </div>
+            {% else %}
+                <h1>{{ word.word_ru|title }}</h1>
+            <p class="pronun">/{{ word.pronunciation_ru }}/</p>
+            <audio controls src="{{ word.audio_ru }}">
+
+                </audio>
+            </div>
+            <div class="main__content">
+                <p class="meaning">
+                    {{ word.text_ru|title }}
+                </p>
+                <p class="url"> Link to wiki: <a href="{{ word.wiki_ru }}">click</a></p>
+            </div>
+        </div>
+
+            {% endif %}
+    <footer class="foot">
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,<br> when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+    </footer>
+    <script src="{% static 'js/main.js' %}"></script>
+    </body>
+</html>

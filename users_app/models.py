@@ -86,7 +86,7 @@ class Users(AbstractBaseUser):
     first_name = models.CharField(max_length=50, )
     last_name = models.CharField(max_length=50, )
     email = models.EmailField(max_length=80, unique=True)
-    phone_number = PhoneNumberField(unique=True, null=True)
+    phone_number = PhoneNumberField(null=True)
     date_joined = models.DateTimeField(verbose_name='date_joined', auto_now_add=True)
     last_login = models.DateTimeField(verbose_name='last_login', auto_now=True)
     last_update = models.DateTimeField(auto_now=True)

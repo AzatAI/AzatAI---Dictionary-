@@ -18,7 +18,7 @@ import requests
 from bs4 import BeautifulSoup
 import wikipediaapi
 import re
-
+from users_app.forms import *
 def translator(OBJ, lang):
     HEADERS = {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
@@ -167,68 +167,74 @@ def get_word(request, word, lang):
 class Main(View):
 
     def post(self, request):
-        word = str(request.POST.get('word')).lower().strip()
-        word.replace(" ", "_")
-        if not word:
-            return redirect('dict_main_url')
-        word_ru = translator(word, 'ru')
-        word_en = translator(word, 'en')
+        if request.POST.get('word'):
+            word = str(request.POST.get('word')).lower().strip()
+            word.replace(" ", "_")
+            if not word:
+                return redirect('dict_main_url')
+            word_ru = translator(word, 'ru')
+            word_en = translator(word, 'en')
 
-        is_ru = (re.findall(r'[а-яА-ЯёЁ]', word))
-        words = Word.objects.all()
-        en_words = []
-        ru_words = []
-        lang = 'en'
-        for i in words:
-            en_words.append(i.word_en)
-            ru_words.append(i.word_ru)
-        if is_ru:
-            lang = 'ru'
-            if word_ru in ru_words:
-                word_ru = Word.objects.get(word_ru=word_ru)
-                return redirect('word_detail_url', id=word_ru.id, lang=lang)
-        elif word_en in en_words:
-            word_en = Word.objects.get(word_en=word_en)
-            return redirect('word_detail_url', id=word_en.id, lang=lang)
+            is_ru = (re.findall(r'[а-яА-ЯёЁ]', word))
+            words = Word.objects.all()
+            en_words = []
+            ru_words = []
+            lang = 'en'
+            for i in words:
+                en_words.append(i.word_en)
+                ru_words.append(i.word_ru)
+            if is_ru:
+                lang = 'ru'
+                if word_ru in ru_words:
+                    word_ru = Word.objects.get(word_ru=word_ru)
+                    return redirect('word_detail_url', id=word_ru.id, lang=lang)
+            elif word_en in en_words:
+                word_en = Word.objects.get(word_en=word_en)
+                return redirect('word_detail_url', id=word_en.id, lang=lang)
 
-        en_word = get_word(request, word_en.lower(), 'en')
-        ru_word = get_word(request, word_ru.lower(), 'ru')
+            en_word = get_word(request, word_en.lower(), 'en')
+            ru_word = get_word(request, word_ru.lower(), 'ru')
 
-        try:
-            word = Word.objects.create( word_en=word_en,
-                                        text_en=en_word['meaning'],
-                                        audio_en=en_word['link_audio'],
-                                        wiki_en=en_word['wikipedia_url'],
-                                        pronunciation_en=en_word['pronunciation'],
-                                        word_ru=word_ru,
-                                        text_ru=ru_word['meaning'],
-                                        audio_ru=ru_word['link_audio'],
-                                        wiki_ru=ru_word['wikipedia_url'],
-                                        pronunciation_ru=ru_word['pronunciation'],
+            try:
+                word = Word.objects.create( word_en=word_en,
+                                            text_en=en_word['meaning'],
+                                            audio_en=en_word['link_audio'],
+                                            wiki_en=en_word['wikipedia_url'],
+                                            pronunciation_en=en_word['pronunciation'],
+                                            word_ru=word_ru,
+                                            text_ru=ru_word['meaning'],
+                                            audio_ru=ru_word['link_audio'],
+                                            wiki_ru=ru_word['wikipedia_url'],
+                                            pronunciation_ru=ru_word['pronunciation'],
 
-                                    )
-        except Exception:
-            return redirect("not_found_url")
+                                        )
+            except Exception:
+                return redirect("not_found_url")
 
-        return redirect('word_detail_url', id=word.id, lang=lang)
+            return redirect('word_detail_url', id=word.id, lang=lang)
+        return redirect('dict_main_url')
 
 
     def get(self, request):
         words = Word.objects.all()
-        history_words = HistoryWord.objects.filter(user=request.user)
-        return render(request, 'dictionary/Main.html', context={'words': words, 'history_words': history_words})
+        form = RegistrationForm()
+        history_words = []
+        if request.user.is_authenticated:
+            history_words = HistoryWord.objects.filter(user=request.user)
+        return render(request, 'index.html', context={'words': words,'form': form, 'history_words': history_words})
 
 
 class WordDetail(View):
     def get(self, request, id, lang):
         word = Word.objects.get(id=id)
-        history_words = HistoryWord.objects.filter(user=request.user)
-
-        his_words = []
-        for i in history_words:
-            his_words.append(i.word.word_en)
 
         if request.user.is_authenticated:
+            history_words = HistoryWord.objects.filter(user=request.user)
+
+            his_words = []
+            for i in history_words:
+                his_words.append(i.word.word_en)
+
             if word.word_en not in his_words:
                 print(word, his_words)
                 HistoryWord.objects.create(user=request.user, word=word)
@@ -237,7 +243,7 @@ class WordDetail(View):
                 last_word.delete()
                 HistoryWord.objects.create(user=request.user, word=word)
 
-        return render(request, 'dictionary/word_detail.html', context={'word': word, 'lang': lang})
+        return render(request, 'index1.html', context={'word': word, 'lang': lang})
 
 # class WordList(View):
 #     def get(self, request, words):

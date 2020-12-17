@@ -85,9 +85,9 @@ class MyAccount(View):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return redirect('registration_user_url')
+            return redirect('dict_main_url')
 
-        return render(request, 'Web/my-account.html',)
+        return render(request, 'privatefolder.html',)
 
 
 class Main(View):
@@ -115,7 +115,7 @@ class Main(View):
 class Logout(View):
     def get(self, request):
         logout(request)
-        return redirect('main_url')
+        return redirect('dict_main_url')
 
 
 class Registration(View):
@@ -133,8 +133,9 @@ class Registration(View):
             user = Users.objects.get(id__iexact=request.user.id)
             Device.objects.create(ip=ip, device_os=os, user=user)
 
-            return redirect('main_url')
-        return render(request, "azatAI/registration.html", context={'form': bound_form,  })
+            return redirect('dict_main_url')
+        # return render(request, "azatAI/registration.html", context={'form': bound_form,  })
+        return redirect('dict_main_url')
 
 
     def get(self, request):
@@ -161,8 +162,8 @@ class Login(View):
                 user.last_login = datetime.now()
                 user.save()
 
-            return redirect('main_url')
-        return render(request, "azatAI/Login.html", context={'form_log': bound_form, })
+            return redirect('dict_main_url')
+        return redirect('dict_main_url')
 
     def get(self, request):
         user = request.user
