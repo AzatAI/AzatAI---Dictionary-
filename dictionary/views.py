@@ -172,6 +172,12 @@ def get_word(request, word, lang):
 class Main(View):
 
     def post(self, request):
+        lang = request.POST.get('lang_btn')
+        if lang:
+            request.user.lang_setting = lang
+            request.user.save()
+            return redirect("dict_main_url")
+
         if request.POST.get('word'):
             word = str(request.POST.get('word')).lower().strip()
             word.replace(" ", "_")

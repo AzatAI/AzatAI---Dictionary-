@@ -13,7 +13,12 @@
 			<div class="exit">
 				<a href="javascript:PopUpHide('#popup1')">X</a>
 			</div>
-			<h1>Регистрация</h1>
+            {% if request.user.lang_setting == 'ru' %}
+                <h1>Регистрация</h1>
+                {% else %}
+                <h1>Sign up</h1>
+            {% endif %} 
+
                 <form action="{% url 'registration_user_url' %}"  method="post" enctype='multipart/form-data'>
                     {% csrf_token %}
 
@@ -73,12 +78,21 @@
 			<div class="exit">
 				<a href="javascript:PopUpHide('#popup2')">X</a>
 			</div>
-			<h1>Войти</h1>
+
+              {% if request.user.lang_setting == 'ru' %}
+                <h1>Войти</h1>
+                {% else %}
+                <h1>Sign in</h1>
+            {% endif %}
              <form action="{% url 'log_user_url' %}"  method="post" enctype='multipart/form-data'>
                 {% csrf_token %}
                 <input type="text" placeholder="Email or Phone Number" name="email_or_phone" size="22"><br>
                 <input type="password" placeholder="Password" name="password" size="22" ><br>
-                <button class="aplybutton">Готово</button>
+                 {% if request.user.lang_setting == 'ru' %}
+                    <button class="aplybutton">Готово</button>
+                {% else %}
+                    <button class="aplybutton">Sign in</button>
+            {% endif %}
             </form>
 		</div>
 	</div>
@@ -91,6 +105,8 @@
 
 
 {#				<h3><a class="head__sign active" href="">Выход</a></h3>#}
+                {% if request.user.lang_setting == 'ru' %}
+
                 {% if not request.user.is_authenticated %}
                     <h3><a class="head__sign" href="javascript:PopUpShow('#popup2')">Войти</a></h3>
                     <h3><a class="head__sign" href="javascript:PopUpShow('#popup1')">Регистрация</a></h3>
@@ -98,19 +114,40 @@
                         <h3><a class="head__sign active" href="{% url 'my_account_url' %}">Личный Кабинет</a></h3>
                     	<h3><a class="head__sign active" href="{% url 'logout_url' %}">Выход</a></h3>
                 {% endif %}
+                {% else %}
+                 {% if not request.user.is_authenticated %}
+                    <h3><a class="head__sign" href="javascript:PopUpShow('#popup2')">Sign in</a></h3>
+                    <h3><a class="head__sign" href="javascript:PopUpShow('#popup1')">Sign up</a></h3>
+                    {% else %}
+                        <h3><a class="head__sign active" href="{% url 'my_account_url' %}">Personal Area</a></h3>
+                    	<h3><a class="head__sign active" href="{% url 'logout_url' %}">Log out</a></h3>
+                {% endif %}
+                {% endif %}
 			</div>
 		</div>
 		<div class="wrap1">
             <form action="{% url 'dict_main_url'%}"  method="post">
                 {% csrf_token %}
                 <input class="inpt" type="text" name="word" size="40">
-                <button class="btn" type="submit" >Искать</button>
+                {% if request.user.lang_setting == 'ru' %}
+                    <button class="btn" type="submit" >Искать</button>
+                {% else %}
+                    <button class="btn" type="submit" >Search</button>
+                {% endif %}
             </form>
 			<div class="head__lang">
-				<h3><a href="">Русский</a></h3>
+                <form action="{% url 'dict_main_url' %}" method="post">
+                {% csrf_token %}
+                {% if request.user.lang_setting == 'en' %}
+				    <h3><button class="btn" value="ru" name="lang_btn" type="submit">Русский</button></h3>
+                {% else %}
+                    <h3><button class="btn" value="en" name="lang_btn" type="submit">English</button></h3>
+                {% endif %}
+                </form>
 			</div>
 		</div>
 	</header>
+    {% block content %}
 	<div class="main">
 		<div class="main__block">
 			<img src="../static/images/p1.png" alt="Тут была фотография , но сегодня она ушла домой на выходной">
@@ -121,8 +158,9 @@
 <!--			<button class="btn"><a href="javascript:PopUpShow('#popup1')">Search it now!</a></button>-->
 		</div>
 	</div>
+    {% endblock %}
+{#	</div>#}
 
-	</div>
 	<footer class="foot">
 		<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,<br> when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
 	</footer>

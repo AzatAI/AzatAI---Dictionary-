@@ -92,6 +92,7 @@ class Users(AbstractBaseUser):
     last_login = models.DateTimeField(verbose_name='last_login', auto_now=True)
     last_update = models.DateTimeField(auto_now=True)
     session_expire = models.DateTimeField(default=get_deadline)
+    lang_setting = models.CharField(max_length=5, default='en')
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
