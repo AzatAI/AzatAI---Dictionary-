@@ -96,18 +96,19 @@ class Registration(View):
 class Login(View):
     def post(self, request):
         bound_form = LogForm(request.POST)
+
         email_or_phone = request.POST['email_or_phone']
         password = request.POST['password']
-        if bound_form.is_valid():
-            user = authenticate(email_or_phone=email_or_phone, password=password)
-            if user:
-                login(request, user)
-                user = Users.objects.get(id=request.user.id)
-                user.last_update = datetime.now()
-                user.last_login = datetime.now()
-                user.save()
+        if email_or_phone and password:
+            if bound_form.is_valid():
+                user = authenticate(email_or_phone=email_or_phone, password=password)
+                if user:
+                    login(request, user)
+                    user = Users.objects.get(id=request.user.id)
+                    user.last_update = datetime.now()
+                    user.last_login = datetime.now()
+                    user.save()
 
-            return redirect('dict_main_url')
         return redirect('dict_main_url')
 
     def get(self, request):

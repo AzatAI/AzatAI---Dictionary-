@@ -67,12 +67,6 @@ body {
 	outline: none;
 }
 
-.exit{
-	font-weight: bolder;
-	position: absolute;
-	top: 325px;
-	left: 655px;
-}
 
 .head__logoText {
 	flex-grow: 1;

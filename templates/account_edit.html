@@ -1,112 +1,26 @@
+{% extends 'index.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Dictionary</title>
+
+{% block style %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/style3.css' %}">
-        <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
-    </head>
-    <body>
-    <div class="b-popup" id="popup1">
-        <div class="pop-up-content">
-            <div class="exit">
-                <a href="javascript:PopUpHide('#popup1')">X</a>
-            </div>
-          <h1>Регистрация</h1>
-                <form action="{% url 'registration_user_url' %}"  method="post" enctype='multipart/form-data'>
-                    {% csrf_token %}
+{% endblock %}
 
-                    {{ form.last_name }}
-                    {% if form.last_name.errors %}
-                        <div class="alert alert-danger">
-                            {{ form.last_name.errors }}
-                        </div>
-                    {% endif %}
+{% block lang_word %}
+{#     {% if request.user.is_authenticated %}#}
+{#             <form action="{% url 'my_account_edit_url' %}" method="post">#}
+{#            {% csrf_token %}#}
+{#            {% if request.user.lang_setting == 'en' %}#}
+{#                <h3><button class="btn" value="ru" name="lang_btn" type="submit">Русский</button></h3>#}
+{#            {% else %}#}
+{#                <h3><button class="btn" value="en" name="lang_btn" type="submit">English</button></h3>#}
+{#            {% endif %}#}
+{#            </form>#}
+{#        {% else %}#}
+{##}
+{#    {% endif %}#}
+{% endblock %}
 
-                    {{ form.first_name }}
-                    {% if form.first_name.errors %}
-                        <div class="alert alert-danger">
-                            {{ form.first_name.errors }}
-                        </div>
-                    {% endif %}
-
-                    {{ form.email }}
-                    {% if form.email.errors %}
-                        <div class="alert alert-danger">
-                            {{ form.email.errors }}
-                        </div>
-                    {% endif %}
-
-                    {{ form.phone_number }}
-                     {% if form.phone_number.errors %}
-                        <div class="alert alert-danger">
-                            {{ form.phone_number.errors }}
-                        </div>
-                    {% endif %}
-
-                   {{ form.password1 }}
-                    {% if form.password1.errors %}
-                        <div class="alert alert-danger">
-                            {{ form.password1.errors }}
-                        </div>
-                    {% endif %}
-
-                  {{ form.password2 }}
-                    {% if form.password2.errors %}
-                        <div class="alert alert-danger">
-                            {{ form.password2.errors }}
-                        </div>
-                    {% endif %}
-                    <button class="aplybutton">Готово</button>
-                </form>
-
-        </div>
-    </div>
-    <div class="b-popup" id="popup2">
-        <div class="pop-up-content">
-            <div class="exit">
-                <a href="javascript:PopUpHide('#popup2')">X</a>
-            </div>
-             <h1>Войти</h1>
-             <form action="{% url 'log_user_url' %}"  method="post" enctype='multipart/form-data'>
-                {% csrf_token %}
-                <input type="text" placeholder="Email or Phone Number" name="email_or_phone" size="22"><br>
-                <input type="password" placeholder="Password" name="password" size="22" ><br>
-                <button class="aplybutton">Готово</button>
-            </form>
-        </div>
-    </div>
-    <header class="head">
-        <div class="head__up">
-            <div class="head__logoText">
-                <h2 ><a href="{% url 'dict_main_url' %}">Dictionary</a></h2>
-            </div>
-            <div class="head__login">
-                 {% if not request.user.is_authenticated %}
-                    <h3><a class="head__sign" href="javascript:PopUpShow('#popup2')">Войти</a></h3>
-                    <h3><a class="head__sign" href="javascript:PopUpShow('#popup1')">Регистрация</a></h3>
-                    {% else %}
-                        <h3><a class="head__sign active" href="#">Личный Кабинет</a></h3>
-                    	<h3><a class="head__sign active" href="{% url 'logout_url' %}">Выход</a></h3>
-                {% endif %}
-            </div>
-        </div>
-        <div class="wrap1">
-            <form action="{% url 'dict_main_url'%}"  method="post">
-                {% csrf_token %}
-                <input class="inpt" type="text" name="word" size="40">
-                <button class="btn" type="submit" >Искать</button>
-            </form>
-            <div class="head__lang">
-{#                {% if lang == 'en' %}#}
-{#                    <h3><a href="{% url 'word_detail_url' id=word.id lang='ru' %}">Русский</a></h3>#}
-{#                {% elif lang == 'ru'%}#}
-{#                    <h3><a href="{% url 'word_detail_url' id=word.id lang='en' %}">English</a></h3>#}
-{#                {% endif %}#}
-            </div>
-        </div>
-    </header>
+{% block content %}
     <div class="main">
     <form action="{% url 'my_account_edit_url' %}" method="post" enctype='multipart/form-data'>
         <div class="main__up">
@@ -117,23 +31,25 @@
                 {% else %}
                  <img src="{% static 'images/avatar.png' %}" width="200" height="200">
                 {% endif %}
-            <h4>Change image:   <input type="file" name="image" accept="image/*" ></h4>
+            <h4>{% if request.user.lang_setting == 'en' %}Change image:   {% else %} Сменить фото профиля:  {% endif %} <input type="file" name="image" accept="image/*" ></h4>
 {#            <<in></in>put type="image" name="image" alt="avatar" src="{{ request.user.image.url }}">#}
             </div>
             <div class="filed">
 
               {% csrf_token %}
-                <h4>First Name: <input type="text" value="{{ request.user.first_name }}" name="first_name"></h4>
-                <h4>Last Name: <input type="text" value="{{ request.user.last_name }}" name="last_name"></h4>
-                <h4>Email: <input type="email" value="{{ request.user.email }}" name="email"></h4>
-                <h4>Phone: <input type="text" value="{{ request.user.phone_number }}" name="phone_number"></h4>
-                 <h4>Current password:   <input type="password" id="account-details-oldpass" name="password"></h4>
-                 <h4>New password:  <input type="password" id="account-details-newpass" name="password1"></h4>
-                 <h4>Confirm password:  <input type="password" id="account-details-confpass" name="password2"></h4>
+                <h4>{% if request.user.lang_setting == 'en' %}First Name {% else %} Имя {% endif %} : <input type="text" value="{{ request.user.first_name }}" name="first_name"></h4>
+                <h4>{% if request.user.lang_setting == 'en' %}Last Name{% else %} Фамилия {% endif %}: <input type="text" value="{{ request.user.last_name }}" name="last_name"></h4>
+                <h4>{% if request.user.lang_setting == 'en' %}Email{% else %} Email{% endif %}: <input type="email" value="{{ request.user.email }}" name="email"></h4>
+                <h4>{% if request.user.lang_setting == 'en' %}Phone{% else %} Телефон {% endif %}: <input type="text" value="{{ request.user.phone_number }}" name="phone_number"></h4>
+                 <h4>{% if request.user.lang_setting == 'en' %}Current password{% else %} Текущий пароль {% endif %}:   <input type="password" id="account-details-oldpass" name="password"></h4>
+                 <h4>{% if request.user.lang_setting == 'en' %}New password{% else %} Новый пароль {% endif %}:  <input type="password" id="account-details-newpass" name="password1"></h4>
+                 <h4>{% if request.user.lang_setting == 'en' %}Confirm password{% else %} Подвердите пароль {% endif %}:  <input type="password" id="account-details-confpass" name="password2"></h4>
 
-
-                <button type="submit"><h2>Save</h2></button>
-
+                {% if request.user.lang_setting == 'en' %}
+                    <button type="submit"><h2>Save</h2></button>
+                {% else %}
+                    <button type="submit"><h2>Сохранить</h2></button>
+                {% endif %}
             </div>
 
         </div>
@@ -149,9 +65,4 @@
 {#            </ol>#}
 {#        </div>#}
     </div>
-    <footer class="foot">
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,<br> when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-    </footer>
-    <script src="{% static 'js/main.js' %}"></script>
-    </body>
-</html>
+{% endblock %}

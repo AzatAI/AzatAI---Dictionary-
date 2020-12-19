@@ -174,10 +174,10 @@ class Main(View):
     def post(self, request):
         lang = request.POST.get('lang_btn')
         if lang:
-            request.user.lang_setting = lang
-            request.user.save()
-            return redirect("dict_main_url")
-
+            if request.user.is_authenticated:
+                request.user.lang_setting = lang
+                request.user.save()
+                return redirect("dict_main_url")
         if request.POST.get('word'):
             word = str(request.POST.get('word')).lower().strip()
             word.replace(" ", "_")
@@ -281,6 +281,14 @@ class WordView(APIView):
 
 
 class MyAccount(View):
+    def post(self, request):
+        lang = request.POST.get('lang_btn')
+        if lang:
+            if request.user.is_authenticated:
+                request.user.lang_setting = lang
+                request.user.save()
+                return redirect("my_account_url")
+
     def get(self, request):
         if not request.user.is_authenticated:
             return redirect('dict_main_url')
@@ -293,6 +301,13 @@ class MyAccount(View):
 
 class MyAccountEdit(View):
     def post(self, request):
+        lang = request.POST.get('lang_btn')
+        if lang:
+            if request.user.is_authenticated:
+                request.user.lang_setting = lang
+                request.user.save()
+                return redirect("my_account_edit_url")
+
         user_new_data = Users.objects.get(id=request.user.id)
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
