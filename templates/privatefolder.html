@@ -23,8 +23,17 @@
             </div>
             <div class="filed">
             {% if request.user.lang_setting == 'en' %}
-                <h4>First Name: {{ request.user.first_name }}</h4>
-                <h4>Last Name: {{ request.user.last_name }}</h4>
+                <h4>First Name:{% if request.user.first_name %}
+                                {{ request.user.first_name }}
+                                {% else %}
+                                No first name
+                                {% endif %} </h4>
+
+                <h4>Last Name: {% if request.user.last_name%}
+                                {{ request.user.last_name }}
+                                {% else %}
+                                No last name
+                                {% endif %} </h4>
                 <h4>Email: {{ request.user.email }}</h4>
                 <h4>Phone: {% if request.user.phone_number %}
                             {{ request.user.phone_number }}
